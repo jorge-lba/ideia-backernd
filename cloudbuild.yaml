@@ -1,0 +1,18 @@
+steps:
+    - name: 'gcr.io/cloud-builders/docker'
+      args: ['build', '-t', 'gcr.io/ideia-back/ideia-backend:latest', '-t', 'gcr.io/ideia-back/ideia-backend:$SHORT_SHA', '.']  
+    
+    - name: 'docker'
+      args: ['run', '-d', '--name', 'ideia-backend', 'gcr.io/ideia-back/ideia-backend:latest']
+  
+    - name: 'docker'
+      args: ['exec', 'ideia-backend', 'yarn', 'test']
+  
+    - name: 'docker'
+      args: ['push', 'gcr.io/ideia-back/ideia-backend:latest']
+  
+    - name: 'docker'
+      args: ['push', 'gcr.io/ideia-back/ideia-backend:$SHORT_SHA']
+  
+    - name: 'gcr.io/cloud-builders/gcloud'
+      args: ['run', 'deploy', 'ideia-backend-cloudrun', '--image', 'gcr.io/ideia-back/ideia-backend:$SHORT_SHA', '--region', 'us-central1', '--platform', 'managed', '--allow-unauthenticated']
