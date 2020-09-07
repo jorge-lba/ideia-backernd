@@ -4,5 +4,5 @@ args: ['build', '-t', 'gcr.io/ideia-back/ideia-backend:latest', '-t', 'gcr.io/id
 - name: 'docker'
 args: ['run', '-d', '--name', 'ideia-backend', 'gcr.io/ideia-back/ideia-backend:latest']
 
-- name: 'docker'
-  args: ['exec', 'ideia-backend', 'yarn', 'test']
+# - name: 'docker'
+#   args: ['exec', 'ideia-backend', 'yarn', 'test']
