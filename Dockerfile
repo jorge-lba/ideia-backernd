@@ -1,13 +1,11 @@
-FROM node:12
+FROM node:12-slim
 
-WORKDIR . /app
+WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN yarn install
+RUN npm install --only=production
 
-COPY . .
+COPY . ./
 
-EXPOSE 8080
-
-CMD [ "yarn", "start" ]
+CMD [ "npm", "start" ]
