@@ -20,6 +20,6 @@ Route.post('/sessions', 'SessionController.store')
 Route.get('/', () => {
     return {
         page: 'Home',
-        message: 'Test'
+        message: 'Adonis'
     }
 })

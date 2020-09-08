@@ -1,6 +1,16 @@
 steps:
+
+    - name: "gcr.io/cloud-builders/gsutil"
+      args: ["cp", "gs://jorge-lba/.env", ".env"]
+
     - name: 'gcr.io/cloud-builders/docker'
-        args: ['build', '-t', 'gcr.io/ideia-back/ideia-backend:$SHORT_SHA', '-f', 'Dockerfile','.']  
+      args: ['build', '-t', 'gcr.io/ideia-back/ideia-backend:latest','.']  
     
     - name: 'docker'
-        args: ['run', '-d', '--name', 'ideia-backend', 'gcr.io/ideia-back/ideia-backend:$SHORT_SHA']
+      args: ['tag', 'gcr.io/ideia-back/ideia-backend:latest', 'gcr.io/ideia-back/ideia-backend:$SHORT_SHA']
+    
+    - name: 'docker'
+      args: ['run', '-d','--name', 'ideia-backend', 'gcr.io/ideia-back/ideia-backend:$SHORT_SHA']
+
+    - name: 'docker'
+      args: ['exec', 'ideia-backend', 'npm', 'test']
