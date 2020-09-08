@@ -1,9 +1,6 @@
 steps:
     - name: 'gcr.io/cloud-builders/docker'
-        args: ['build', '-t', 'gcr.io/ideia-back/ideia-backend:latest', '-t', 'gcr.io/ideia-back/ideia-backend:$SHORT_SHA', '.']  
-
+        args: ['build', '-t', 'gcr.io/ideia-back/ideia-backend:$SHORT_SHA', '-f', 'Dockerfile','.']  
+    
     - name: 'docker'
-        args: ['run', '-d', '--name', 'ideia-backend', 'gcr.io/ideia-back/ideia-backend:latest']
-
-    # - name: 'docker'
-    #   args: ['exec', 'ideia-backend', 'yarn', 'test']
+        args: ['run', '-d', '--name', 'ideia-backend', 'gcr.io/ideia-back/ideia-backend:$SHORT_SHA']
