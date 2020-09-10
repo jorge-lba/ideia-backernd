@@ -17,6 +17,8 @@ test('must create user', async ({ assert, client }) => {
     .send( payload )
     .end()
 
+  console.log(response)
+  
   response.assertStatus(200)
   assert.exists(response.body.token)
 })
