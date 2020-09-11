@@ -3,17 +3,26 @@ steps:
     - name: "gcr.io/cloud-builders/gsutil"
       args: ["cp", "gs://jorge-lba/.env", ".env"]
 
-    - name: 'gcr.io/cloud-builders/docker'
-      args: ['build', '-t', 'gcr.io/ideia-back/ideia-backend:latest','.']  
-    
-    - name: 'docker'
-      args: ['tag', 'gcr.io/ideia-back/ideia-backend:latest', 'gcr.io/ideia-back/ideia-backend:$SHORT_SHA']
-    
-    - name: 'docker'
-      args: ['run', '-d','--name', 'ideia-backend', 'gcr.io/ideia-back/ideia-backend:$SHORT_SHA']
+    - name: "gcr.io/cloud-builders/gsutil"
+      args: ["cp", "gs://jorge-lba/.env.testing", ".env.testing"]
 
+    - name: "gcr.io/cloud-builders/gsutil"
+      args: ["cp", "gs://jorge-lba/serviceAccountKey.json", "serviceAccountKey.json"]
+
+    - name: 'gcr.io/cloud-builders/docker'
+      args: ['build', '-t', 'gcr.io/ideia-back/ideia-backend:test','-f', 'Dockerfile.test', '.']  
+    
+    - name: 'docker'
+      args: ['run', '-d','--name', 'ideia-backend', 'gcr.io/ideia-back/ideia-backend:$test']
+  
     - name: 'docker'
       args: ['exec', 'ideia-backend', 'npm', 'test']
+
+    - name: 'docker'
+      args: ['build', '-t', 'gcr.io/ideia-back/ideia-backend:latest','-f', 'Dockerfile', '.']
+      
+    - name: 'docker'
+      args: ['tag', 'gcr.io/ideia-back/ideia-backend:latest', 'gcr.io/ideia-back/ideia-backend:$SHORT_SHA']
 
     - name: 'docker'
       args: [ 'push', 'gcr.io/ideia-back/ideia-backend:$SHORT_SHA' ]

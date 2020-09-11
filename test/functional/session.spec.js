@@ -9,17 +9,21 @@ const User = use('App/Models/User')
 trait('Test/ApiClient')
 
 test('The answer must be: unit testing', async ({ assert, client }) => {
-    const sessionPayload = {
-        email: 'ideiatest@test.com',
-        uid_auth: 'LfgRKhmc90wQKNUMEN9wgIDZDip0'
-    }
-    
-    const user = await Factory
+    const {$attributes:payload} = await Factory
         .model('App/Models/User')
-        .create( sessionPayload )
-        
+        .make()
+    
+    const userPayload = {
+        name:payload.name,
+        user_tag: payload.user_tag,
+        email:payload.email,
+        uid_auth: payload.uid_auth
+    }
+
+    await User.create(userPayload)
+
     const response = await client.post('/sessions')
-        .send( sessionPayload )
+        .send( userPayload )
         .end()
 
     response.assertStatus(200)
