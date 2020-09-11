@@ -6,6 +6,10 @@ tmp
 
 # Environment variables, never commit this file
 .env
+.env.testing
 
 # The development sqlite file
 database/*.sqlite
+
+# SDK Admin key firebase authentication
+serviceAccountKey.json

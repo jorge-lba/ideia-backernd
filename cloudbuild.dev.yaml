@@ -3,8 +3,14 @@ steps:
     - name: "gcr.io/cloud-builders/gsutil"
       args: ["cp", "gs://jorge-lba/.env", ".env"]
 
+    - name: "gcr.io/cloud-builders/gsutil"
+      args: ["cp", "gs://jorge-lba/.env.testing", ".env.testing"]
+
+    - name: "gcr.io/cloud-builders/gsutil"
+      args: ["cp", "gs://jorge-lba/serviceAccountKey.json", "serviceAccountKey.json"]
+
     - name: 'gcr.io/cloud-builders/docker'
-      args: ['build', '-t', 'gcr.io/ideia-back/ideia-backend:latest','.']  
+      args: ['build', '-t', 'gcr.io/ideia-back/ideia-backend:latest','-f', 'Dockerfile.test', '.']  
     
     - name: 'docker'
       args: ['tag', 'gcr.io/ideia-back/ideia-backend:latest', 'gcr.io/ideia-back/ideia-backend:$SHORT_SHA']
