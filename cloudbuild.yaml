@@ -13,7 +13,7 @@ steps:
       args: ['build', '-t', 'gcr.io/ideia-back/ideia-backend:test','-f', 'Dockerfile.test', '.']  
     
     - name: 'docker'
-      args: ['run', '-d','--name', 'ideia-backend', 'gcr.io/ideia-back/ideia-backend:$test']
+      args: ['run', '-d','--name', 'ideia-backend', 'gcr.io/ideia-back/ideia-backend:test']
   
     - name: 'docker'
       args: ['exec', 'ideia-backend', 'npm', 'test']
