@@ -9,7 +9,6 @@ class ConvertEmptyStringsToNull {
         }))
       )
     }
-
     await next()
   }
 }
