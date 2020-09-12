@@ -5,10 +5,10 @@ const Schema = use('Schema')
 
 class SocialNetworkSchema extends Schema {
   up () {
-    this.create('social_networks', (table) => {
+    this.create('socialNetworks', (table) => {
       table.increments()
       table
-        .string('user_email')
+        .string('userEmail')
         .notNullable()
         .references('email')
         .inTable('users')
@@ -21,7 +21,7 @@ class SocialNetworkSchema extends Schema {
   }
 
   down () {
-    this.drop('social_networks')
+    this.drop('socialNetworks')
   }
 }
 

@@ -13,7 +13,7 @@ class FirebaseProvider extends ServiceProvider {
   register () {
     this.app.singleton('Firebase/Admin', (app) => {
       // Obtain application configuration in config/
-      const Config = require("../../serviceAccountKey.json")
+      const Config = require('../../serviceAccountKey.json')
 
       // Export our service
       return new (require('.'))(Config)

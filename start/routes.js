@@ -20,8 +20,8 @@ Route.post('/sessions', 'SessionController.store')
 Route.post('/user', 'UserController.create')
 
 Route.get('/', () => {
-    return {
-        page: 'Home',
-        message: 'Adonis'
-    }
+  return {
+    page: 'Home',
+    message: 'Adonis'
+  }
 })

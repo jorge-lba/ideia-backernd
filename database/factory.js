@@ -17,15 +17,13 @@ const Factory = use('Factory')
 Factory.blueprint('App/Models/User', (faker, i, data = {}) => {
   return {
     name: faker.name(),
-    user_tag: faker.last(),
+    userTag: faker.last(),
     email: faker.email(),
-    uid_auth: faker.string( {length: 16} ),
+    uidAuth: faker.string({ length: 16 }),
     emailVerified: false,
-    password: faker.string({length: 10}),
+    password: faker.string({ length: 10 }),
     displayName: faker.name(),
     photoURL: 'https://cdn-prod.medicalnewstoday.com/content/images/articles/322/322868/golden-retriever-puppy.jpg',
     disabled: false
   }
 })
-
-

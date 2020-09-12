@@ -4,61 +4,43 @@ const loginFirebaseAuthentication = require('../utils/login.js')
 /** @type {import('@adonisjs/lucid/src/Factory')} */
 const Factory = use('Factory')
 
-/** @type {typeof import('@adonisjs/lucid/src/Lucid/Model') */
-const User = use('App/Models/User')
+const Firebase = use('Firebase/Admin')
 
 trait('Test/ApiClient')
 timeout(8000)
 
-const admin = require("firebase-admin");
-const serviceAccount = require("../../serviceAccountKey.json");
-
 test('must create user', async ({ assert, client }) => {
-
-  await admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: process.env.FIREBASE_PROJECT_URL
-  });
-  
-  const {$attributes:userPayload} = await Factory
+  const { $attributes: userPayload } = await Factory
     .model('App/Models/User')
     .make()
 
-  const userAuth = await admin
+  const userAuth = await Firebase
     .auth()
-    .createUser( userPayload )
+    .createUser(userPayload)
 
-  const { 
+  const {
     displayName,
     email,
     uid
   } = userAuth
-  
+
   const user = {
     name: displayName,
     email,
-    uid_auth: uid
+    uidAuth: uid
   }
 
-  const idToken = await loginFirebaseAuthentication({...user, password: userPayload.password})
- 
-  const decodedToken = await admin
-  .auth()
-  .verifyIdToken(idToken)
-  
-  console.log(decodedToken)
+  const idToken = await loginFirebaseAuthentication({ ...user, password: userPayload.password })
 
-  
-
-  user.user_tag = userPayload.user_tag
+  user.userTag = userPayload.userTag
 
   const response = await client.post('/user')
-    .send( user )
+    .send(user)
+    .header('token', idToken)
     .end()
-  
-  await admin.auth().deleteUser(user.uid_auth)
-  
+
+  await Firebase.auth().deleteUser(user.uidAuth)
+
   response.assertStatus(200)
   assert.exists(response.body.token)
-
 })

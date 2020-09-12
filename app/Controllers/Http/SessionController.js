@@ -1,16 +1,16 @@
 'use strict'
 
 class SessionController {
-    async store({ request, auth }){
-        const { email, uid_auth } = request.only([
-            'email',
-            'uid_auth'
-        ])
+  async store ({ request, auth }) {
+    const { email, uidAuth } = request.only([
+      'email',
+      'uidAuth'
+    ])
 
-        const { token } = await auth.attempt(email, uid_auth)
+    const { token } = await auth.attempt(email, uidAuth)
 
-        return { token }
-    }
+    return { token }
+  }
 }
 
 module.exports = SessionController
