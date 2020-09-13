@@ -65,3 +65,26 @@ test('Get all users', async ({ assert, client }) => {
 
   await Firebase.auth().deleteUser(dataUser.uidAuth)
 })
+
+test('Update user name', async ({ assert, client }) => {
+  const userUpdate = {
+    ...dataUser,
+    name: 'Ideia Test'
+  }
+
+  const response = await client.update('/user')
+    .header('token', tokenUser)
+    .send(userUpdate)
+    .end()
+
+  response.assertStatus(200)
+  response.assertJSON({
+    status: 200,
+    data: {
+      ...userUpdate,
+      englishLevel: null,
+      profileImage: null,
+      spanishLevel: null
+    }
+  })
+})
