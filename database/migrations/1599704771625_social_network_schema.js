@@ -6,7 +6,6 @@ const Schema = use('Schema')
 class SocialNetworkSchema extends Schema {
   up () {
     this.create('socialNetworks', (table) => {
-      table.increments()
       table
         .string('userEmail')
         .notNullable()

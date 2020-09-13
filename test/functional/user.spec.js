@@ -43,7 +43,6 @@ test('must create user', async ({ assert, client }) => {
     .end()
 
   response.assertStatus(200)
-  assert.exists(response.body.token)
 })
 
 test('Get all users', async ({ assert, client }) => {
@@ -57,7 +56,10 @@ test('Get all users', async ({ assert, client }) => {
     data: [{
       email: dataUser.email,
       name: dataUser.name,
-      userTag: dataUser.userTag
+      userTag: dataUser.userTag,
+      englishLevel: null,
+      profileImage: null,
+      spanishLevel: null
     }]
   })
 
