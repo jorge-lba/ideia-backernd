@@ -72,7 +72,9 @@ test('Update user name', async ({ assert, client }) => {
     name: 'Ideia Test'
   }
 
-  const response = await client.update('/user')
+  delete userUpdate.uidAuth
+
+  const response = await client.put('/user')
     .header('token', tokenUser)
     .send(userUpdate)
     .end()
