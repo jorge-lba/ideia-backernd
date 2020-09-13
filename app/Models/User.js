@@ -4,7 +4,7 @@
 const Model = use('Model')
 
 /** @type {import('@adonisjs/framework/src/Hash')} */
-const Hash = use('Hash')
+// const Hash = use('Hash')
 
 class User extends Model {
   static boot () {
@@ -14,11 +14,15 @@ class User extends Model {
      * A hook to hash the user password before saving
      * it to the database.
      */
-    this.addHook('beforeSave', async (userInstance) => {
-      if (userInstance.dirty.uidAuth) {
-        userInstance.uidAuth = await Hash.make(userInstance.uidAuth)
-      }
-    })
+    // this.addHook('beforeSave', async (userInstance) => {
+    //   if (userInstance.dirty.uidAuth) {
+    //     userInstance.uidAuth = await Hash.make(userInstance.uidAuth)
+    //   }
+    // })
+  }
+
+  static get primaryKey () {
+    return 'uidAuth'
   }
 
   static get hidden () {

@@ -20,6 +20,7 @@ Route.post('/sessions', 'SessionController.store')
 
 Route.get('/user', 'UserController.index')
 Route.post('/user', 'UserController.create')
+Route.put('/user', 'UserController.update')
 
 Route.get('/', () => {
   return {
