@@ -9,6 +9,9 @@ const Firebase = use('Firebase/Admin')
 trait('Test/ApiClient')
 timeout(8000)
 
+let dataUser
+let tokenUser
+
 test('must create user', async ({ assert, client }) => {
   const { $attributes: userPayload } = await Factory
     .model('App/Models/User')
@@ -24,23 +27,39 @@ test('must create user', async ({ assert, client }) => {
     uid
   } = userAuth
 
-  const user = {
+  dataUser = {
     name: displayName,
     email,
     uidAuth: uid
   }
 
-  const idToken = await loginFirebaseAuthentication({ ...user, password: userPayload.password })
+  tokenUser = await loginFirebaseAuthentication({ ...dataUser, password: userPayload.password })
 
-  user.userTag = userPayload.userTag
+  dataUser.userTag = userPayload.userTag
 
   const response = await client.post('/user')
-    .send(user)
-    .header('token', idToken)
+    .send(dataUser)
+    .header('token', tokenUser)
     .end()
-
-  await Firebase.auth().deleteUser(user.uidAuth)
 
   response.assertStatus(200)
   assert.exists(response.body.token)
+})
+
+test('Get all users', async ({ assert, client }) => {
+  const response = await client.get('/user')
+    .header('token', tokenUser)
+    .end()
+
+  response.assertStatus(200)
+  response.assertJSON({
+    status: 200,
+    data: [{
+      email: dataUser.email,
+      name: dataUser.name,
+      userTag: dataUser.userTag
+    }]
+  })
+
+  await Firebase.auth().deleteUser(dataUser.uidAuth)
 })
