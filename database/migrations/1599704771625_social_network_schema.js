@@ -3,25 +3,26 @@
 /** @type {import('@adonisjs/lucid/src/Schema')} */
 const Schema = use('Schema')
 
-class SocialNetworkSchema extends Schema {
+class UserSocialNetworkSchema extends Schema {
   up () {
-    this.create('socialNetworks', (table) => {
+    this.create('userSocialNetworks', (table) => {
       table
-        .string('userEmail')
+        .string('uidUser')
         .notNullable()
-        .references('email')
+        .references('uidAuth')
         .inTable('users')
         .onUpdate('CASCADE')
         .onDelete('CASCADE')
+        .unique()
       table.string('provider').notNullable()
-      table.string('url').notNullable()
+      table.string('url').notNullable().unique()
       table.timestamps()
     })
   }
 
   down () {
-    this.drop('socialNetworks')
+    this.drop('userSocialNetworks')
   }
 }
 
-module.exports = SocialNetworkSchema
+module.exports = UserSocialNetworkSchema
