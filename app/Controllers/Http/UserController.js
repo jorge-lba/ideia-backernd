@@ -2,13 +2,13 @@
 
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model') */
 const User = use('App/Models/User')
+const SocialNetwork = use('App/Models/SocialNetwork')
 
 const firebase = use('Firebase/Admin')
 
 class UserController {
   async index ({ response }) {
-    const users = await User.all()
-
+    const users = await User.query().with('socialNetworks').fetch()
     return response.status(200).json({
       status: 200,
       data: users
@@ -26,6 +26,18 @@ class UserController {
         'spanishLevel',
         'profileImage'
       ])
+
+      const { socialNetworks: userSocialNetworks } = request
+        .only([
+          'socialNetworks'
+        ])
+
+      for (const socialNetwork of userSocialNetworks) {
+        await SocialNetwork.create({
+          uidUser: userData.uidAuth,
+          ...socialNetwork
+        })
+      }
 
       await User.create(userData)
 
@@ -51,7 +63,7 @@ class UserController {
     ])
 
     const user = await User.findBy('uidAuth', uid)
-
+    await user.load('socialNetworks')
     user.merge(userData)
     await user.save()
 
