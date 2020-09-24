@@ -21,11 +21,18 @@ class UserController {
         'name',
         'userTag',
         'email',
-        'uidAuth',
         'englishLevel',
         'spanishLevel',
         'profileImage'
       ])
+
+      const idToken = request.header('token')
+
+      const token = await firebase
+        .auth()
+        .verifyIdToken(idToken.toString())
+
+      const uidAuth = token.uid
 
       const { socialNetworks: userSocialNetworks } = request
         .only([
@@ -33,13 +40,15 @@ class UserController {
         ])
 
       for (const socialNetwork of userSocialNetworks) {
+        const { provider, url } = socialNetwork
         await SocialNetwork.create({
-          uidUser: userData.uidAuth,
-          ...socialNetwork
+          uidUser: uidAuth,
+          provider,
+          url
         })
       }
 
-      await User.create(userData)
+      await User.create({ uidAuth, ...userData })
 
       return response.status(200).json({
         status: 200
