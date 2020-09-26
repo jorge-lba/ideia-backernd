@@ -27,7 +27,7 @@ const removeDataUser = data => {
   return data
 }
 
-test('must create user', async ({ assert, client }) => {
+test('Deve criar um usuário', async ({ assert, client }) => {
   const { $attributes: userPayload } = await Factory
     .model('App/Models/User')
     .make()
@@ -52,7 +52,7 @@ test('must create user', async ({ assert, client }) => {
   response.assertStatus(200)
 })
 
-test('Get all users', async ({ assert, client }) => {
+test('Deve pegar todos os usuários cadastrados', async ({ assert, client }) => {
   const response = await client.get('/user')
     .header('token', tokenUser)
     .end()
@@ -63,7 +63,7 @@ test('Get all users', async ({ assert, client }) => {
   })
 })
 
-test('Update user name', async ({ assert, client }) => {
+test('Deve atualizar o nome do usuário', async ({ assert, client }) => {
   const userUpdate = {
     ...dataUser,
     name: 'Ideia Test'
