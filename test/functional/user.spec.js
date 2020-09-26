@@ -1,5 +1,5 @@
 const { test, trait, timeout } = use('Test/Suite')('User')
-const loginFirebaseAuthentication = require('../utils/login.js')
+const UserTest = require('../utils/createUser.js')
 
 /** @type {import('@adonisjs/lucid/src/Factory')} */
 const Factory = use('Factory')
@@ -7,42 +7,42 @@ const Factory = use('Factory')
 const Firebase = use('Firebase/Admin')
 
 trait('Test/ApiClient')
-timeout(8000)
+timeout(32000)
 
 let dataUser
 let tokenUser
 let uidUser
+
+const removeDataUser = data => {
+  data.name = data.displayName
+  data.uidAuth = data.uid
+
+  delete data.password
+  delete data.displayName
+  delete data.emailVerified
+  delete data.disabled
+  delete data.uidAuth
+  delete data.uid
+
+  return data
+}
 
 test('must create user', async ({ assert, client }) => {
   const { $attributes: userPayload } = await Factory
     .model('App/Models/User')
     .make()
 
-  const userAuth = await Firebase
-    .auth()
-    .createUser(userPayload)
+  const { userAuth, userToken } = await UserTest()
 
-  const {
-    displayName,
-    email,
-    uid
-  } = userAuth
+  dataUser = removeDataUser({
+    displayName: userAuth.displayName,
+    uid: userAuth.uid,
+    ...userPayload
+  })
 
-  dataUser = {
-    ...userPayload,
-    name: displayName,
-    email,
-    uidAuth: uid
-  }
+  tokenUser = userToken
 
-  delete dataUser.password
-  delete dataUser.displayName
-  delete dataUser.emailVerified
-  delete dataUser.disabled
-
-  tokenUser = await loginFirebaseAuthentication({ ...dataUser, password: userPayload.password })
-
-  uidUser = dataUser.uidAuth
+  uidUser = userAuth.uid
 
   const response = await client.post('/user')
     .send(dataUser)
@@ -56,7 +56,6 @@ test('Get all users', async ({ assert, client }) => {
   const response = await client.get('/user')
     .header('token', tokenUser)
     .end()
-  delete dataUser.uidAuth
   response.assertStatus(200)
   response.assertJSON({
     status: 200,
