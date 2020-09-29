@@ -23,6 +23,7 @@ Route.post('/user', 'UserController.create')
 Route.put('/user', 'UserController.update')
 
 Route.get('/socialNetwork', 'SocialNetworkController.index')
+Route.post('/socialNetwork', 'SocialNetworkController.create')
 
 Route.get('/', () => {
   return {
