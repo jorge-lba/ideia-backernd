@@ -27,6 +27,8 @@ const loginFirebaseAuth = async (data) => {
 
   await browser.close()
 
+  global.UserTokenFirebaseAuth = token
+
   return token
 }
 
