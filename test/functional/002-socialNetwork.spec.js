@@ -22,23 +22,57 @@ const fristUserData = async () => {
   return userData
 }
 
-test('Deve pegar as redes dos usuários', async ({ assert, client }) => {
-  try {
-    const { socialNetworks, uidAuth } = await fristUserData()
+test(
+  'Deve pegar as redes dos usuários',
+  async ({ assert, client }) => {
+    try {
+      const { socialNetworks, uidAuth } = await fristUserData()
 
-    const response = await client.get('/socialNetwork')
+      const response = await client.get('/socialNetwork')
+        .header('token', global.UserTokenFirebaseAuth)
+        .end()
+      const userSocialNetworks = response.body.data
+        .filter(socialNetwork => socialNetwork.uidUser === uidAuth)
+
+      response.assertStatus(200)
+
+      userSocialNetworks.forEach((socialNetwork, index) => {
+        assert.equal(socialNetwork.provider, socialNetworks[index].provider)
+        assert.equal(socialNetwork.url, socialNetworks[index].url)
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+)
+
+test(
+  'Deve adicionar uma nova rede social para o usuário',
+  async ({ assert, client }) => {
+    const newSocialNetwork = {
+      provider: 'Instagram',
+      url: 'http://instagran.com/user'
+    }
+
+    const response = await client.post('/socialNetwork')
+      .send({ socialNetworks: [newSocialNetwork] })
       .header('token', global.UserTokenFirebaseAuth)
       .end()
-    const userSocialNetworks = response.body.data
-      .filter(socialNetwork => socialNetwork.uidUser === uidAuth)
+
+    const { socialNetworks } = await fristUserData()
 
     response.assertStatus(200)
-
-    userSocialNetworks.forEach((socialNetwork, index) => {
-      assert.equal(socialNetwork.provider, socialNetworks[index].provider)
-      assert.equal(socialNetwork.url, socialNetworks[index].url)
+    response.assertJSON({
+      status: 200,
+      message: 'Redes adicionadas com sucesso!'
     })
-  } catch (error) {
-    console.log(error)
+
+    const [socialNetwork] = socialNetworks.filter(
+      socialNetwork =>
+        socialNetwork.provider === newSocialNetwork.provider
+    )
+
+    assert.equal(socialNetwork.provider, newSocialNetwork.provider)
+    assert.equal(socialNetwork.url, newSocialNetwork.url)
   }
-})
+)
