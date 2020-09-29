@@ -25,7 +25,10 @@ class VerifyTokenFirebaseAuth {
 
       if (date > token.exp) return response.status(400).json({ message: 'Token expired' })
     } catch (error) {
-      console.log(error)
+      return response.status(500).json({
+        status: 500,
+        message: error.message
+      })
     }
 
     await next()
