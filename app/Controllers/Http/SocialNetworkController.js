@@ -21,7 +21,7 @@ class SocialNetworkController {
 
   async create ({ request, response }) {
     try {
-      const data = request.only(['socialNetworks'])
+      const { socialNetworks } = request.only(['socialNetworks'])
       const idToken = request.header('token')
 
       const token = await firebase
@@ -30,7 +30,7 @@ class SocialNetworkController {
 
       const uidAuth = token.uid
 
-      for (const socialNetwork of data) {
+      for (const socialNetwork of socialNetworks) {
         const { provider, url } = socialNetwork
         await SocialNetwork.create({
           uidUser: uidAuth,
@@ -38,6 +38,7 @@ class SocialNetworkController {
           url
         })
       }
+      console.log('Test Create')
 
       return response.status(200).json({
         status: 200,
