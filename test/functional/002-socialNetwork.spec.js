@@ -92,7 +92,7 @@ test(
 
     updateSocialNetwork.current = socialNetworkCurrent.url
 
-    const response = await client.update('/socialNetwork')
+    const response = await client.put('/socialNetwork')
       .send(updateSocialNetwork)
       .header('token', global.UserTokenFirebaseAuth)
       .end()
@@ -102,6 +102,5 @@ test(
       status: 200,
       message: 'Redes atualizada com sucesso!'
     })
-    console.log(updateSocialNetwork)
   }
 )
