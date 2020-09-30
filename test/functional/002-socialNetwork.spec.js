@@ -76,3 +76,32 @@ test(
     assert.equal(socialNetwork.url, newSocialNetwork.url)
   }
 )
+
+test(
+  'Deve atualizar a url da rede social do usuário',
+  async ({ assert, client }) => {
+    const updateSocialNetwork = {
+      provider: 'facebook',
+      current: '',
+      updateTo: 'http://www.testRede.com'
+    }
+    const user = await fristUserData()
+
+    const [socialNetworkCurrent] = user
+      .socialNetworks.filter(socialNetwork => socialNetwork.provider === 'facebook')
+
+    updateSocialNetwork.current = socialNetworkCurrent.url
+
+    const response = await client.update('/socialNetwork')
+      .send(updateSocialNetwork)
+      .header('token', global.UserTokenFirebaseAuth)
+      .end()
+
+    response.assertStatus(200)
+    response.assertJSON({
+      status: 200,
+      message: 'Redes atualizada com sucesso!'
+    })
+    console.log(updateSocialNetwork)
+  }
+)
