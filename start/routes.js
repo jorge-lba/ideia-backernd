@@ -25,6 +25,7 @@ Route.put('/user', 'UserController.update')
 Route.get('/socialNetwork', 'SocialNetworkController.index')
 Route.post('/socialNetwork', 'SocialNetworkController.create')
 Route.put('/socialNetwork', 'SocialNetworkController.update')
+Route.delete('/socialNetwork', 'SocialNetworkController.delete')
 
 Route.get('/', () => {
   return {

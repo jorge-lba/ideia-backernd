@@ -53,7 +53,7 @@ class SocialNetworkController {
 
   async update ({ request, response }) {
     try {
-      const newSocialNetowork = request.only([
+      const newSocialNetwork = request.only([
         'provider',
         'current',
         'updateTo'
@@ -72,14 +72,50 @@ class SocialNetworkController {
         .fetch()
 
       const [socialNetwork] = socialNetworks.rows
-        .filter(socialNetwork => socialNetwork.url === newSocialNetowork.current)
+        .filter(socialNetwork => socialNetwork.url === newSocialNetwork.current)
 
-      socialNetwork.url = newSocialNetowork.updateTo
+      socialNetwork.url = newSocialNetwork.updateTo
       await socialNetwork.save()
 
       return response.status(200).json({
         status: 200,
         message: 'Redes atualizada com sucesso!'
+      })
+    } catch (error) {
+      return response.status(500).json({
+        status: 500,
+        error
+      })
+    }
+  }
+
+  async delete ({ request, response }) {
+    try {
+      const deleteSocialNetwork = request.all([
+        'provider',
+        'url'
+      ])
+      const idToken = request.header('token')
+
+      const token = await firebase
+        .auth()
+        .verifyIdToken(idToken.toString())
+
+      const uidAuth = token.uid
+
+      const socialNetworks = await SocialNetwork.query()
+        .where('uidUser', '=', uidAuth)
+        .fetch()
+
+      const [socialNetwork] = socialNetworks.rows
+        .filter(socialNetwork => socialNetwork.url === deleteSocialNetwork.url)
+
+      socialNetwork.delete()
+      await socialNetwork.save()
+
+      return response.status(200).json({
+        status: 200,
+        message: 'Rede excluída com sucesso'
       })
     } catch (error) {
       return response.status(500).json({
