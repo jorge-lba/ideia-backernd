@@ -104,3 +104,19 @@ test(
     })
   }
 )
+
+test(
+  'Deve excluir o facebook do usuário',
+  async ({ assert, client }) => {
+    const response = await client.delete('/socialNetwork')
+      .send({ provider: 'facebook', url: 'http://www.testRede.com' })
+      .header('token', global.UserTokenFirebaseAuth)
+      .end()
+
+    response.assertStatus(200)
+    response.assertJSON({
+      status: 200,
+      message: 'Rede excluída com sucesso'
+    })
+  }
+)
