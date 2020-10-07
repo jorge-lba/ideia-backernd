@@ -16,6 +16,7 @@ const Factory = use('Factory')
 
 Factory.blueprint('App/Models/User', (faker, i, data = {}) => {
   return {
+    id: 1,
     userTag: faker.last(),
     email: faker.email(),
     uidAuth: faker.string({ length: 16 }),
