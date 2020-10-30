@@ -68,12 +68,13 @@ class UserController {
       const user = await User.findBy('uidAuth', uid)
 
       for (const socialNetwork of socialNetworks) {
-        const res = await SocialNetwork.findOrCreate(
+        const network = await SocialNetwork.findOrCreate(
           { uidUser: uid, provider: socialNetwork.provider },
           { uidUser: uid, ...socialNetwork }
         )
 
-        console.log(res)
+        network.merge(socialNetwork)
+        await network.save()
       }
 
       user.merge(userData)
