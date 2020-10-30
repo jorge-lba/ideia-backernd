@@ -24,6 +24,9 @@ const removeDataUser = data => {
   delete data.uidAuth
   delete data.uid
 
+  data.userTag = null
+  data.profileImage = null
+
   return data
 }
 
@@ -56,10 +59,15 @@ test('Deve pegar todos os usuários cadastrados', async ({ assert, client }) => 
   const response = await client.get('/user')
     .header('token', tokenUser)
     .end()
+
+  const user = { ...dataUser }
+
+  user.socialNetworks = []
+
   response.assertStatus(200)
   response.assertJSON({
     status: 200,
-    data: [dataUser]
+    data: [user]
   })
 })
 

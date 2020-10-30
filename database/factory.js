@@ -25,6 +25,9 @@ Factory.blueprint('App/Models/User', (faker, i, data = {}) => {
     displayName: faker.name(),
     englishLevel: null,
     spanishLevel: null,
+    phone: null,
+    state: null,
+    uf: null,
     profileImage: 'https://cdn-prod.medicalnewstoday.com/content/images/articles/322/322868/golden-retriever-puppy.jpg',
     socialNetworks: [{
       provider: 'facebook',

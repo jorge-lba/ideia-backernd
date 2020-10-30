@@ -19,11 +19,11 @@ class UserController {
     try {
       const userData = request.only([
         'name',
-        'userTag',
-        'email',
-        'englishLevel',
-        'spanishLevel',
-        'profileImage'
+        // 'userTag',
+        'email'
+        // 'englishLevel',
+        // 'spanishLevel',
+        // 'profileImage'
       ])
 
       const idToken = request.header('token')
@@ -33,21 +33,6 @@ class UserController {
         .verifyIdToken(idToken.toString())
 
       const uidAuth = token.uid
-
-      const { socialNetworks: userSocialNetworks } = request
-        .only([
-          'socialNetworks'
-        ])
-
-      for (const socialNetwork of userSocialNetworks) {
-        const { provider, url } = socialNetwork
-        await SocialNetwork.create({
-          uidUser: uidAuth,
-          provider,
-          url
-        })
-      }
-
       await User.create({ uidAuth, ...userData })
 
       return response.status(200).json({
@@ -59,27 +44,54 @@ class UserController {
   }
 
   async update ({ request, response, auth }) {
-    const { uid } = await firebase
-      .auth()
-      .verifyIdToken(request.header('token').toString())
-    const userData = request.only([
-      'name',
-      'userTag',
-      'email',
-      'englishLevel',
-      'spanishLevel',
-      'profileImage'
-    ])
+    try {
+      const { uid } = await firebase
+        .auth()
+        .verifyIdToken(request.header('token').toString())
+      const userData = request.only([
+        'name',
+        'userTag',
+        'email',
+        'phone',
+        'state',
+        'uf',
+        'englishLevel',
+        'spanishLevel',
+        'profileImage',
+        'socialNetworks'
+      ])
 
-    const user = await User.findBy('uidAuth', uid)
-    await user.load('socialNetworks')
-    user.merge(userData)
-    await user.save()
+      const socialNetworks = userData.socialNetworks
 
-    return response.status(200).json({
-      status: 200,
-      data: user
-    })
+      delete userData.socialNetworks
+
+      const user = await User.findBy('uidAuth', uid)
+
+      for (const socialNetwork of socialNetworks) {
+        const res = await SocialNetwork.findOrCreate(
+          { uidUser: uid, provider: socialNetwork.provider },
+          { uidUser: uid, ...socialNetwork }
+        )
+
+        console.log(res)
+      }
+
+      user.merge(userData)
+
+      await user.load('socialNetworks')
+      await user.save()
+
+      return response.status(200).json({
+        status: 200,
+        data: user
+      })
+    } catch (error) {
+      console.log(error)
+      return response.status(500).json({
+        status: 500,
+        error
+      })
+    }
   }
 }
 
