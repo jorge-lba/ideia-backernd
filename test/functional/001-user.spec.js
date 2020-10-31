@@ -55,22 +55,6 @@ test('Deve criar um usuário', async ({ assert, client }) => {
   response.assertStatus(200)
 })
 
-test('Deve pegar todos os usuários cadastrados', async ({ assert, client }) => {
-  const response = await client.get('/user')
-    .header('token', tokenUser)
-    .end()
-
-  const user = { ...dataUser }
-
-  user.socialNetworks = []
-
-  response.assertStatus(200)
-  response.assertJSON({
-    status: 200,
-    data: [user]
-  })
-})
-
 test('Deve atualizar o nome do usuário', async ({ assert, client }) => {
   const userUpdate = {
     ...dataUser,
@@ -90,4 +74,48 @@ test('Deve atualizar o nome do usuário', async ({ assert, client }) => {
     }
   })
   await Firebase.auth().deleteUser(uidUser)
+})
+
+test('Deve adicionar 7 formações no banco de dados', async ({ assert, client }) => {
+  const formations = [
+    'Exatas/Engenharia',
+    'Computação',
+    'Administração',
+    'Humanidades',
+    'Jurídica',
+    'Biológicas',
+    'Ciências Médicas'
+  ]
+
+  for (const formation of formations) {
+    const response = await client.post('/trainingAreas')
+      .header('token', tokenUser)
+      .send({ area: formation })
+      .end()
+
+    response.assertStatus(200)
+    response.assertJSON({
+      status: 200,
+      message: `Formação ${formation} foi adicionada com sucesso!`,
+      data: {
+        formation
+      }
+    })
+  }
+})
+
+test('Deve pegar todos os usuários cadastrados', async ({ assert, client }) => {
+  const response = await client.get('/user')
+    .header('token', tokenUser)
+    .end()
+
+  const user = { ...dataUser }
+  user.name = 'Ideia Test'
+  user.trainingAreas = []
+
+  response.assertStatus(200)
+  response.assertJSON({
+    status: 200,
+    data: [user]
+  })
 })
