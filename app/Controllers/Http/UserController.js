@@ -8,7 +8,10 @@ const firebase = use('Firebase/Admin')
 
 class UserController {
   async index ({ response }) {
-    const users = await User.query().with('socialNetworks').fetch()
+    const users = await User.query()
+      .with('socialNetworks')
+      .with('trainingAreas')
+      .fetch()
     return response.status(200).json({
       status: 200,
       data: users

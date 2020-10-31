@@ -27,6 +27,8 @@ Route.post('/socialNetwork', 'SocialNetworkController.create')
 Route.put('/socialNetwork', 'SocialNetworkController.update')
 Route.delete('/socialNetwork', 'SocialNetworkController.delete')
 
+Route.post('/trainingAreas', 'TrainingAreaController.create')
+
 Route.get('/', () => {
   return {
     page: 'Home',

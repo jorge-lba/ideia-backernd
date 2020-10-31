@@ -54,6 +54,14 @@ class User extends Model {
       'uidUser'
     )
   }
+
+  trainingAreas () {
+    return this.hasMany(
+      'App/Models/UserTrainingArea',
+      'id',
+      'userId'
+    )
+  }
 }
 
 module.exports = User

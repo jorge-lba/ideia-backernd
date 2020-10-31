@@ -14,8 +14,6 @@ class UserSchema extends Schema {
       table.string('phone')
       table.string('state')
       table.string('uf')
-      table.string('englishLevel')
-      table.string('spanishLevel')
       table.string('profileImage')
       table.timestamps()
     })
