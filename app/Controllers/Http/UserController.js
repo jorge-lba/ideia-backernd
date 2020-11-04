@@ -3,6 +3,7 @@
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model') */
 const User = use('App/Models/User')
 const SocialNetwork = use('App/Models/SocialNetwork')
+const UserLanguage = use('App/Models/UserLanguage')
 
 const firebase = use('Firebase/Admin')
 
@@ -11,6 +12,7 @@ class UserController {
     const users = await User.query()
       .with('socialNetworks')
       .with('trainingAreas')
+      .with('languages')
       .fetch()
     return response.status(200).json({
       status: 200,
@@ -22,11 +24,7 @@ class UserController {
     try {
       const userData = request.only([
         'name',
-        // 'userTag',
         'email'
-        // 'englishLevel',
-        // 'spanishLevel',
-        // 'profileImage'
       ])
 
       const idToken = request.header('token')
@@ -61,12 +59,15 @@ class UserController {
         'englishLevel',
         'spanishLevel',
         'profileImage',
-        'socialNetworks'
+        'socialNetworks',
+        'languages'
       ])
 
       const socialNetworks = userData.socialNetworks
+      const languages = userData.languages
 
       delete userData.socialNetworks
+      delete userData.languages
 
       const user = await User.findBy('uidAuth', uid)
 
@@ -80,9 +81,21 @@ class UserController {
         await network.save()
       }
 
+      for (const data of languages) {
+        const lang = await UserLanguage.findOrCreate(
+          { userId: user.id, language: data.language },
+          { userId: user.id, language: data.language }
+        )
+
+        lang.merge({ language: data.language })
+        await lang.save()
+      }
+
       user.merge(userData)
 
       await user.load('socialNetworks')
+      await user.load('languages')
+
       await user.save()
 
       return response.status(200).json({

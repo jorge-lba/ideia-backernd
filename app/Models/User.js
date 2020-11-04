@@ -62,6 +62,14 @@ class User extends Model {
       'userId'
     )
   }
+
+  languages () {
+    return this.hasMany(
+      'App/Models/UserLanguage',
+      'id',
+      'userId'
+    )
+  }
 }
 
 module.exports = User
