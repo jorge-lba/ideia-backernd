@@ -58,7 +58,17 @@ test('Deve criar um usuário', async ({ assert, client }) => {
 test('Deve atualizar o nome do usuário', async ({ assert, client }) => {
   const userUpdate = {
     ...dataUser,
-    name: 'Ideia Test'
+    name: 'Ideia Test',
+    languages: [
+      {
+        id: 1,
+        language: 'Ingles'
+      },
+      {
+        id: 2,
+        language: 'Espanhol'
+      }
+    ]
   }
 
   const response = await client.put('/user')
@@ -109,7 +119,19 @@ test('Deve pegar todos os usuários cadastrados', async ({ assert, client }) => 
     .header('token', tokenUser)
     .end()
 
-  const user = { ...dataUser }
+  const user = {
+    ...dataUser,
+    languages: [
+      {
+        id: 1,
+        language: 'Ingles'
+      },
+      {
+        id: 2,
+        language: 'Espanhol'
+      }
+    ]
+  }
   user.name = 'Ideia Test'
   user.trainingAreas = []
 
