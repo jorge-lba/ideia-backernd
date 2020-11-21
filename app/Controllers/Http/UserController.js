@@ -60,7 +60,8 @@ class UserController {
         'spanishLevel',
         'profileImage',
         'socialNetworks',
-        'languages'
+        'languages',
+        'skills'
       ])
 
       const socialNetworks = userData.socialNetworks
@@ -71,25 +72,8 @@ class UserController {
 
       const user = await User.findBy('uidAuth', uid)
 
-      for (const socialNetwork of socialNetworks) {
-        const network = await SocialNetwork.findOrCreate(
-          { uidUser: uid, provider: socialNetwork.provider },
-          { uidUser: uid, ...socialNetwork }
-        )
-
-        network.merge(socialNetwork)
-        await network.save()
-      }
-
-      for (const data of languages) {
-        const lang = await UserLanguage.findOrCreate(
-          { userId: user.id, language: data.language },
-          { userId: user.id, language: data.language }
-        )
-
-        lang.merge({ language: data.language })
-        await lang.save()
-      }
+      await findOrCreateItemDatabase(SocialNetwork)(uid)('uidUser')('provider')(socialNetworks)
+      await findOrCreateItemDatabase(UserLanguage)(user.id)('userId')('language')(languages)
 
       user.merge(userData)
 
@@ -111,5 +95,21 @@ class UserController {
     }
   }
 }
+
+const findOrCreateItemDatabase = (Table) =>
+  (id) =>
+    (idField) =>
+      (findField) =>
+        async (datas) => {
+          for (const data of datas) {
+            const table = await Table.findOrCreate(
+              { [idField]: id, [findField]: data[findField] },
+              { [idField]: id, ...data }
+            )
+
+            table.merge(data)
+            await table.save()
+          }
+        }
 
 module.exports = UserController
