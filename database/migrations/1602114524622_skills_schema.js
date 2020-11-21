@@ -7,7 +7,7 @@ class SkillsSchema extends Schema {
   up () {
     this.create('skills', (table) => {
       table.increments()
-      table.string('name').notNullable().unique()
+      table.string('skill').notNullable().unique()
       table.string('description')
       table.timestamps()
     })

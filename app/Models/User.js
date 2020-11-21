@@ -70,6 +70,14 @@ class User extends Model {
       'userId'
     )
   }
+
+  skills () {
+    return this.hasMany(
+      'App/Models/Skill',
+      'id',
+      'userId'
+    )
+  }
 }
 
 module.exports = User

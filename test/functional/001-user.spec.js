@@ -114,6 +114,34 @@ test('Deve adicionar 7 formações no banco de dados', async ({ assert, client }
   }
 })
 
+test('Deve adicionar 7 habilidades no banco de dados', async ({ assert, client }) => {
+  const skills = [
+    'Exatas/Engenharia',
+    'Computação',
+    'Administração',
+    'Humanidades',
+    'Jurídica',
+    'Biológicas',
+    'Ciências Médicas'
+  ]
+
+  for (const skill of skills) {
+    const response = await client.post('/skills')
+      .header('token', tokenUser)
+      .send({ skill })
+      .end()
+
+    response.assertStatus(200)
+    response.assertJSON({
+      status: 200,
+      message: `Habilidade ${skill} foi adicionada com sucesso!`,
+      data: {
+        skill
+      }
+    })
+  }
+})
+
 test('Deve pegar todos os usuários cadastrados', async ({ assert, client }) => {
   const response = await client.get('/user')
     .header('token', tokenUser)

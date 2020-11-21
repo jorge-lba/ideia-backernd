@@ -29,6 +29,8 @@ Route.delete('/socialNetwork', 'SocialNetworkController.delete')
 
 Route.post('/trainingAreas', 'TrainingAreaController.create')
 
+Route.post('/skills', 'SkillController.create')
+
 Route.get('/', () => {
   return {
     page: 'Home',
