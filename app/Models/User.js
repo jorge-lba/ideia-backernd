@@ -73,7 +73,7 @@ class User extends Model {
 
   skills () {
     return this.hasMany(
-      'App/Models/Skill',
+      'App/Models/UserSkill',
       'id',
       'userId'
     )

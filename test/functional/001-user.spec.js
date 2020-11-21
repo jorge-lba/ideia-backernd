@@ -12,6 +12,7 @@ timeout(32000)
 let dataUser
 let tokenUser
 let uidUser
+let userUpdate
 
 const removeDataUser = data => {
   data.name = data.displayName
@@ -56,20 +57,62 @@ test('Deve criar um usuário', async ({ assert, client }) => {
 })
 
 test('Deve atualizar o nome do usuário', async ({ assert, client }) => {
-  const userUpdate = {
+  userUpdate = {
     ...dataUser,
-    name: 'Ideia Test',
-    languages: [
-      {
-        id: 1,
-        language: 'Ingles'
-      },
-      {
-        id: 2,
-        language: 'Espanhol'
-      }
-    ]
+    name: 'Ideia Test'
   }
+
+  const response = await client.put('/user')
+    .header('token', tokenUser)
+    .send(userUpdate)
+    .end()
+
+  response.assertStatus(200)
+  response.assertJSON({
+    status: 200,
+    data: {
+      ...userUpdate
+    }
+  })
+})
+
+test('Deve atualizar os idiomas do usuário', async ({ assert, client }) => {
+  userUpdate.languages = [
+    {
+      id: 1,
+      language: 'Ingles'
+    },
+    {
+      id: 2,
+      language: 'Espanhol'
+    }
+  ]
+
+  const response = await client.put('/user')
+    .header('token', tokenUser)
+    .send(userUpdate)
+    .end()
+
+  response.assertStatus(200)
+  response.assertJSON({
+    status: 200,
+    data: {
+      ...userUpdate
+    }
+  })
+})
+
+test('Deve atualizar as habilidades do usuário', async ({ assert, client }) => {
+  userUpdate.skills = [
+    {
+      id: 1,
+      skill: 'ADM'
+    },
+    {
+      id: 2,
+      skill: 'ENG'
+    }
+  ]
 
   const response = await client.put('/user')
     .header('token', tokenUser)
@@ -109,34 +152,6 @@ test('Deve adicionar 7 formações no banco de dados', async ({ assert, client }
       message: `Formação ${formation} foi adicionada com sucesso!`,
       data: {
         formation
-      }
-    })
-  }
-})
-
-test('Deve adicionar 7 habilidades no banco de dados', async ({ assert, client }) => {
-  const skills = [
-    'Exatas/Engenharia',
-    'Computação',
-    'Administração',
-    'Humanidades',
-    'Jurídica',
-    'Biológicas',
-    'Ciências Médicas'
-  ]
-
-  for (const skill of skills) {
-    const response = await client.post('/skills')
-      .header('token', tokenUser)
-      .send({ skill })
-      .end()
-
-    response.assertStatus(200)
-    response.assertJSON({
-      status: 200,
-      message: `Habilidade ${skill} foi adicionada com sucesso!`,
-      data: {
-        skill
       }
     })
   }

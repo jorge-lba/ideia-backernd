@@ -4,6 +4,7 @@
 const User = use('App/Models/User')
 const SocialNetwork = use('App/Models/SocialNetwork')
 const UserLanguage = use('App/Models/UserLanguage')
+const UserSkill = use('App/Models/UserSkill')
 
 const firebase = use('Firebase/Admin')
 
@@ -66,19 +67,30 @@ class UserController {
 
       const socialNetworks = userData.socialNetworks
       const languages = userData.languages
+      const skills = userData.skills
 
       delete userData.socialNetworks
       delete userData.languages
+      delete userData.skills
 
       const user = await User.findBy('uidAuth', uid)
 
-      await findOrCreateItemDatabase(SocialNetwork)(uid)('uidUser')('provider')(socialNetworks)
-      await findOrCreateItemDatabase(UserLanguage)(user.id)('userId')('language')(languages)
-
       user.merge(userData)
 
-      await user.load('socialNetworks')
-      await user.load('languages')
+      if (socialNetworks) {
+        await findOrCreateItemDatabase(SocialNetwork)(uid)('uidUser')('provider')(socialNetworks)
+        await user.load('socialNetworks')
+      }
+
+      if (languages) {
+        await findOrCreateItemDatabase(UserLanguage)(user.id)('userId')('language')(languages)
+        await user.load('languages')
+      }
+
+      if (skills) {
+        await findOrCreateItemDatabase(UserSkill)(user.id)('userId')('skill')(skills)
+        await user.load('skills')
+      }
 
       await user.save()
 
